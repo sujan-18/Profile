@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sujan Shrestha - Interactive Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #16213e;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            flex-direction: row;
+            overflow: hidden;
+        }
+
+        /* Left Flag */
+        .flag-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/1200px-Flag_of_Nepal.svg.png') no-repeat center center;
+            background-size: contain;
+            transform: scaleX(-1); /* Flips the flag horizontally */
+            z-index: -1;
+        }
+
+        /* Right Flag */
+        .flag-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Flag_of_Nepal.svg/1200px-Flag_of_Nepal.svg.png') no-repeat center center;
+            background-size: contain;
+            z-index: -1;
+        }
+
+        /* Centered page content */
+        .page {
+            display: none;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            text-align: center;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Animated Name Styling */
+        .animated-name {
+            font-size: 5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: black; /* Initially black */
+            text-shadow: 0px 0px 20px black, 0px 0px 30px black;
+            animation: glow 1.5s infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0px 0px 10px black, 0px 0px 20px black; }
+            100% { text-shadow: 0px 0px 30px #e94e77, 0px 0px 50px #e94e77; }
+        }
+
+        /* Button Styling */
+        .button {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 1.5em;
+            color: white;
+            background: #e94e77; /* Matching button color */
+            border: 2px solid #e94e77;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .button:hover {
+            background: #ff8da1; /* Lighter pink on hover */
+            color: #16213e;
+            transform: scale(1.1);
+        }
+
+        /* Social Media Icons */
+        .social-media {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .social-media a {
+            font-size: 2.5em;
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-media a:hover {
+            color: #e94e77; /* Same as the main button color */
+        }
+
+        /* Image Gallery (for Family) */
+        .gallery {
+            position: relative;
+            width: 70%; /* Limit the gallery width */
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+            border: 2px solid #e94e77; /* Adding border to the gallery */
+        }
+
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            object-fit: cover; /* Ensures images are cropped appropriately */
+        }
+
+        /* Slide Wrapper */
+        .slides {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+        .slide {
+            width: 100%;
+            flex-shrink: 0;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Previous and Next buttons */
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 2em;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        /* Text Area for Life Story */
+        .life-story-content {
+            width: 80%;
+            margin: 20px auto;
+            padding: 10px;
+            background: #1a1a2e;
+            color: white;
+            font-size: 1.2em;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #e94e77;
+        }
+
+        .life-story-content p {
+            margin-bottom: 15px;
+        }
+
+        .uploaded-images img {
+            width: 80%;
+            height: auto;
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        /* Life Story Image Slider */
+        .life-story-gallery {
+            position: relative;
+            width: 70%; /* Limit the gallery width */
+            margin: auto;
+            overflow: hidden;
+            border-radius: 10px;
+            border: 2px solid #e94e77;
+        }
+
+        .life-story-gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            object-fit: cover;
+        }
+
+        .life-story-slides {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+        .life-story-slide {
+            width: 100%;
+            flex-shrink: 0;
+            transition: transform 0.5s ease;
+        }
+
+        .life-story-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Previous and Next buttons */
+        .life-story-prev, .life-story-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 2em;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .life-story-prev {
+            left: 10px;
+        }
+
+        .life-story-next {
+            right: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .animated-name {
+                font-size: 3.5em;
+            }
+
+            .button {
+                padding: 12px 25px;
+                font-size: 1.3em;
+            }
+
+            .social-media a {
+                font-size: 1.8em;
+            }
+
+            .gallery img {
+                width: 100%; /* Adjusting the size for mobile */
+            }
+
+            .life-story-gallery img {
+                width: 100%; /* Adjusting the size for mobile */
+            }
+
+            .life-story-content {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .animated-name {
+                font-size: 3em;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 1.2em;
+            }
+
+            .social-media a {
+                font-size: 1.5em;
+            }
+
+            .gallery img {
+                width: 100%;
+            }
+
+            .life-story-gallery img {
+                width: 100%;
+            }
+
+            .life-story-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Flag -->
+    <div class="flag-left"></div>
+
+    <!-- Right Flag -->
+    <div class="flag-right"></div>
+
+    <!-- Main Page -->
+    <div class="page active" id="mainPage">
+        <h1 class="animated-name">Sujan Shrestha</h1>
+        <button class="button" onclick="showDetails()">Click Here</button>
+    </div>
+
+    <!-- Details Page -->
+    <div class="page" id="detailsPage">
+        <button class="button" onclick="goBack('mainPage')">Go Back</button>
+        <h2 style="color: #e94e77;">My Details</h2>
+        <p style="font-size: 1.2em;">Fresher | learner | Seekers</p>
+        <p>Email: newarsujan2323@gmail.com | Mobile: 9767581384</p>
+        <div class="social-media">
+            <a href="https://www.linkedin.com/in/sujan-shrestha-1a5ba027b/" target="_blank">🔗 LinkedIn</a>
+            <a href="https://www.facebook.com/sujan2218" target="_blank">📘 Facebook</a>
+            <a href="https://www.instagram.com/____sujan18/" target="_blank">📸 Instagram</a>
+        </div>
+        <button class="button" onclick="showPage('My photos')">My Photos</button>
+        <button class="button" onclick="showPage('family photos')">Family Collection</button>
+    </div>
+
+    <!-- Life Story Page -->
+    <div class="page" id="lifeStoryPage">
+        <button class="button" onclick="goBack('detailsPage')">Go Back</button>
+        <h2 style="color: #e94e77;">My Life Story</h2>
+        <div class="life-story-content">
+            <p>JOIN ME AND LETS FLY TOGETHER</p>
+            <div class="life-story-gallery">
+                <button class="life-story-prev" onclick="moveLifeStorySlide(-1)">&#10094;</button>
+                <div class="life-story-slides">
+                    <div class="life-story-slide">
+                        <img src="https://via.placeholder.com/500" alt="Life Story Photo 1" />
+                    </div>
+                    <div class="life-story-slide">
+                        <img src="https://via.placeholder.com/500" alt="Life Story Photo 2" />
+                    </div>
+                    <div class="life-story-slide">
+                        <img src="https://via.placeholder.com/500" alt="Life Story Photo 3" />
+                    </div>
+                </div>
+                <button class="life-story-next" onclick="moveLifeStorySlide(1)">&#10095;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Family Collection Page -->
+    <div class="page" id="familyPage">
+        <button class="button" onclick="goBack('detailsPage')">Go Back</button>
+        <h2 style="color: #e94e77;">Family Collection</h2>
+        <div class="gallery">
+            <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+            <div class="slides">
+                <div class="slide">
+                    <img src="https://via.placeholder.com/500" alt="Family Photo 1" />
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/500" alt="Family Photo 2" />
+                </div>
+                <div class="slide">
+                    <img src="https://via.placeholder.com/500" alt="Family Photo 3" />
+                </div>
+            </div>
+            <button class="next" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function moveSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            } else if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
+            updateSlider();
+        }
+
+        function updateSlider() {
+            const slideWidth = slides[0].offsetWidth;
+            const newTransformValue = -currentSlide * slideWidth;
+            document.querySelector('.slides').style.transform = `translateX(${newTransformValue}px)`;
+        }
+
+        let currentLifeStorySlide = 0;
+        const lifeStorySlides = document.querySelectorAll('.life-story-slide');
+        const totalLifeStorySlides = lifeStorySlides.length;
+
+        function moveLifeStorySlide(direction) {
+            currentLifeStorySlide += direction;
+            if (currentLifeStorySlide < 0) {
+                currentLifeStorySlide = totalLifeStorySlides - 1;
+            } else if (currentLifeStorySlide >= totalLifeStorySlides) {
+                currentLifeStorySlide = 0;
+            }
+            updateLifeStorySlider();
+        }
+
+        function updateLifeStorySlider() {
+            const slideWidth = lifeStorySlides[0].offsetWidth;
+            const newTransformValue = -currentLifeStorySlide * slideWidth;
+            document.querySelector('.life-story-slides').style.transform = `translateX(${newTransformValue}px)`;
+        }
+
+        function showDetails() {
+            document.getElementById('mainPage').classList.remove('active');
+            document.getElementById('detailsPage').classList.add('active');
+        }
+
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+        }
+
+        function goBack(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page).classList.add('active');
+        }
+
+        // Automatically slide every 3 seconds for Family
+        setInterval(() => moveSlide(1), 3000);
+
+        // Automatically slide every 3 seconds for Life Story
+        setInterval(() => moveLifeStorySlide(1), 3000);
+    </script>
+</body>
+</html>
